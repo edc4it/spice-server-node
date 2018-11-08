@@ -6,15 +6,15 @@
     "start": "DEBUG=spice-server-node:server node ./bin/www"
   },
   "dependencies": {
-    "body-parser": "~1.15.1",
+    "body-parser": "~1.18.3",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.2.0",
-    "express": "~4.13.4",
+    "debug": "~4.1.0",
+    "express": "~4.16.4",
     "frhttp": "^0.1.12",
-    "immutable": "^3.8.1",
+    "immutable": "^4.0.0-rc.12",
     "jade": "~1.11.0",
-    "morgan": "~1.7.0",
-    "serve-favicon": "~2.3.0",
-    "tsmonad": "^0.6.1"
+    "morgan": "~1.9.1",
+    "serve-favicon": "~2.5.0",
+    "tsmonad": "^0.8.0"
   }
 }
