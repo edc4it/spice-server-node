@@ -11,7 +11,6 @@ router.route('/recipes')
         res.json(rs);
     });
 
-
 router.route('/recipes/:id')
     .get((req, res) => {
         recipes.findById(req.params.id)
