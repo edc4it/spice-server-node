@@ -1,13 +1,12 @@
-FROM node:8.12-jessie
+FROM node:12
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-COPY *.lock ./
-RUN yarn install
+RUN npm install
 
 COPY . .
 
 EXPOSE 5000
 
-CMD ["yarn", "start" ]
+CMD ["npm", "start" ]

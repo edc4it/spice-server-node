@@ -1,60 +1,34 @@
-const TsMonad = require('tsmonad');
 const Immutable = require('immutable');
+const Maybe = require('monet').Maybe;
+const testData = require('./test-data');
 
-eval(require('fs').readFileSync('model/test-data.js', 'utf8'));
 
-const includeProps = ['id','image','title','datePublished','difficulty'];
+const includeProps = ['id', 'image', 'title', 'datePublished', 'difficulty'];
 testDataList = Immutable.List(testData);
 
-const overview = testDataList.map(function(r){
+const overview = testDataList.map(r => {
     const o = {};
-    Object.keys(r).filter(function(a){
-        return includeProps.indexOf(a) > -1;
-    }).forEach(function(a){
+    Object.keys(r).filter(a => includeProps.indexOf(a) > -1).forEach(function (a) {
         o[a] = r[a]
     });
     return o
 });
 
-const sortedOverview  = overview.sort((r1, r2) => r2.datePublished < r1.datePublished ? -1 : 1);
+const sortedOverview = overview.sort((r1, r2) => r2.datePublished < r1.datePublished ? -1 : 1);
 
 module.exports = {
 
-    all: function (sortByDate, titlePattern, f) {
-        const data =  sortByDate == true ?  sortedOverview : overview;
-        const filteredData = data.filter(r => (titlePattern===undefined || titlePattern==="") || (r.title.toLowerCase().indexOf(titlePattern.toLowerCase()) > -1))
-
-        f(undefined,filteredData);
-
+    all(sortByDate, titlePattern) {
+        const data = sortByDate === true ? sortedOverview : overview;
+        return data.filter(r => (titlePattern === undefined || titlePattern === "") || (r.title.toLowerCase().indexOf(titlePattern.toLowerCase()) > -1))
     },
 
-
-    findById: function (id, f) {
-        // todo add Maybe monad
-        let r = undefined;
-        for (let i = 0; i < testData.length; i++) {
-            if (testData[i].id === id) {
-                r = testData[i];
-                break;
-            }
-        }
-        if (r)
-            f(undefined, r);
-        else
-            f("not found", undefined);
-
+    findById(id) {
+        return Maybe.fromUndefined(testData.find(s => s.id === id))
     },
 
-    addComment : function(id,comment,f){
-        this.findById(id,function(error,data){
-            if (!error){
-                data.reviews.push(comment);
-            }
-            f(error);
-        });
+    addComment(id, comment) {
+        return this.findById(id).map(r => r.reviews.push(comment))
     }
-
-
-
 };
 

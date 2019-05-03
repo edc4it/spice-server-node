@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 
 const routes = require('./routes/index');
 const recipeApi = require('./routes/recipe-api');
-
+const serveIndex = require('serve-index');
 const app = express();
 
 const allowCrossDomain = function (req, res, next) {
@@ -27,10 +27,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(allowCrossDomain);
 
-app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/images', express.static('public/images'),serveIndex('public/images', {'icons': true}))
 app.use('/', routes);
 app.use('/api', recipeApi);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
