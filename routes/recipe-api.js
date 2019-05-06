@@ -7,8 +7,13 @@ const router = express.Router();
 
 router.route('/recipes')
     .get((req, res) => {
-        const rs = recipes.all(req.query.sort === "datePublished", req.query.titlePattern);
-        res.json(rs);
+        const rs = recipes.all(req.query.sort === "datePublished", req.query.titlePattern, req.query.page);
+        console.log(rs)
+        res.header("Pagination-Count",rs[1]);
+        res.header("Pagination-Page",req.query.page || 1);
+        res.header("Pagination-Limit",10);
+        res.header("Total-elements",rs[2]);
+        res.json(rs[0]);
     });
 
 router.route('/recipes/:id')
