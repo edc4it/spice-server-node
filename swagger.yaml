@@ -1,0 +1,168 @@
+openapi: 3.0.0
+servers:
+  - url: /api
+info:
+  version: "3"
+  title: Recipe API
+paths:
+  /recipes:
+    get:
+      summary: Get recipes
+      description: >
+        By default returns a list of 10 suggested recipes unless a
+        `titlePattern` is added in which case it returns a paged result of the
+        search
+      parameters:
+        - in: query
+          description: turn on date sorting
+          name: sort
+          schema:
+            type: string
+            enum:
+              - datePublished
+        - in: query
+          description: search for a pattern in the title
+          name: titlePattern
+          schema:
+            type: string
+        - in: query
+          description: The page to get when searching with a `titlePattern`
+          name: page
+          schema:
+            type: number
+      responses:
+        "200":
+          description: success
+          headers:
+            Pagination-Count:
+              description: The number of pages
+              schema:
+                type: integer
+            Pagination-Page:
+              description: current requested page
+              schema:
+                type: integer
+            Pagination-Limit:
+              description: Number of items per page
+              schema:
+                type: integer
+            Total-elements:
+              description: total number of items
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeInfo"
+  "/recipes/{id}":
+    get:
+      summary: Get details of a single recipe
+      description: |
+        Returns all the details of a recipe: ingredients, method, comments etc
+      parameters:
+        - in: path
+          description: Id of the recipe to get
+          name: id
+          required: true
+          schema:
+            type: string
+            example: 5160793296cc6208c8a92751
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipeDetails"
+components:
+  schemas:
+    RecipeInfo:
+      type: object
+      properties:
+        id:
+          description: Unique id for the recipe
+          type: string
+          example: 5160793296cc6208c8a92751
+        title:
+          description: Recipe's title
+          type: string
+          example: Spicy Slow-Cooker Beef Chili Recipe
+        image:
+          description: name of the image file (relative to /images/ [5160793296cc6208c8a92751.png](/images/5160793296cc6208c8a92751.png))
+          type: string
+          example: 5160793296cc6208c8a92751.png
+        difficulty:
+          description: number between 0 and 5 indicating dificulty level to prepare the
+            recipe
+          type: number
+          example: 1
+        datePublished:
+          description: Publication date of the recipe (ISO format)
+          type: string
+          example: 2014-05-01T04:33:46.812Z
+    RecipeDetails:
+      allOf:
+        - $ref: '#/components/schemas/RecipeInfo'
+        - type: object
+          properties:
+            cookTime:
+              type: string
+              description: Cooking time (ISO 8601)
+              example: PT8H45M
+            prepTime:
+              type: string
+              description: preperation time (ISO 8601)
+              example: PT30M
+            source:
+              type: string
+              description: Source of the recipe
+              example: bbcfood
+            recipeYield:
+              type: string
+              description: How many servings the recipes yields
+              example: "6 servings"
+            description:
+              type: string
+              description: A full description of the recipe
+              example: A classic chili recipe made easy in a slow cooker with a mixture of ground beef, onion …
+            ingredients:
+              type: array
+              items:
+                type: string
+                example:
+                  - "3 tablespoons  vegetable oil"
+                  - "2 medium yellow onions , medium dice"
+            reviews:
+              type: array
+              items:
+                - $ref: '#/components/schemas/Review'
+              example:
+                - rate: 4
+                  name: Isaac
+                  email: "Leonora_Gusikowski86@yahoo.com"
+                  submitted: "2015-01-16T06:40:39.684Z"
+                  text: "Wonderful and easy recipe..."
+    Review:
+      type: object
+      properties:
+        rate:
+          type: number
+          description: number of stars for this recipe
+          example: 4
+        name:
+          type: string
+          description: The name of the person who left the review
+          example: "Isaac"
+        email:
+          type: string
+          description: Email adress of the author
+          example: "Leonora_Gusikowski86@yahoo.com"
+        submitted:
+          type: string
+          description: Submitted date (ISO 8601)
+          example: "2015-01-16T06:40:39.684Z"
+        text:
+          type: string
+          description: The comment for the review
+          example: "Wonderful and easy recipe..."
+

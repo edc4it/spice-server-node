@@ -3,11 +3,12 @@ const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-
-const routes = require('./routes/index');
+const swaggerUi = require('swagger-ui-express');
 const recipeApi = require('./routes/recipe-api');
 const serveIndex = require('serve-index');
 const app = express();
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
 
 const allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -29,9 +30,10 @@ app.use(allowCrossDomain);
 
 
 app.use('/images', express.static('public/images'),serveIndex('public/images', {'icons': true}))
-app.use('/', routes);
 app.use('/api', recipeApi);
 
+app.use('/', swaggerUi.serve);
+app.get('/', swaggerUi.setup(swaggerDocument));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
