@@ -58,7 +58,7 @@ paths:
     get:
       summary: Get details of a single recipe
       description: |
-        Returns all the details of a recipe: ingredients, method, comments etc
+        Returns all the details of a recipe: ingredients, description, review etc
       parameters:
         - in: path
           description: Id of the recipe to get
@@ -123,7 +123,7 @@ components:
               example: "6 servings"
             description:
               type: string
-              description: A full description of the recipe
+              description: A short description of the recipe
               example: A classic chili recipe made easy in a slow cooker with a mixture of ground beef, onion …
             ingredients:
               type: array

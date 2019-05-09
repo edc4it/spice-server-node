@@ -32,8 +32,15 @@ app.use(allowCrossDomain);
 app.use('/images', express.static('public/images'),serveIndex('public/images', {'icons': true}))
 app.use('/api', recipeApi);
 
-app.use('/', swaggerUi.serve);
-app.get('/', swaggerUi.setup(swaggerDocument));
+var options = {
+    // explorer : true,
+    swaggerOptions: {
+        deepLinking: true,
+    }
+};
+
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
+// app.get('/', swaggerUi.setup(swaggerDocument));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
