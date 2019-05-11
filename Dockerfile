@@ -9,4 +9,6 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["npm", "start" ]
+ENV DEBUG=spice-server-node:server
+
+CMD ["node", "./bin/www" ]
