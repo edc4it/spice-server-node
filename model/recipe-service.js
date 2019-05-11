@@ -1,7 +1,14 @@
 const Maybe = require('monet').Maybe;
 const _ = require("underscore");
 
-const data = require('./test-data');
+const _data = require('./test-data');
+const yearDiff = new Date().getFullYear()-2015;
+const data = _data.map(r => {
+    const dp = new Date(r.datePublished);
+    dp.setFullYear(dp.getFullYear()+yearDiff);
+    const add = {datePublished:dp.toISOString()};
+    return {...r, ...add}
+});
 const overview = data.map(e => _.pick(e, 'id', 'image', 'title', 'datePublished', 'difficulty'));
 
 module.exports = {
@@ -15,10 +22,10 @@ module.exports = {
             : r;
         if (titlePattern) {
             const start = (page - 1) * 10;
-            const totalPages =  Math.ceil(sortedOrNot.length / 10);
-            return [sortedOrNot.slice(start, start+10),totalPages,sortedOrNot.length]
+            const totalPages = Math.ceil(sortedOrNot.length / 10);
+            return [sortedOrNot.slice(start, start + 10), totalPages, sortedOrNot.length]
         }
-        return [sortedOrNot,1,10];
+        return [sortedOrNot, 1, 10];
     },
 
     findById(id) {
