@@ -9,14 +9,14 @@ const data = _data.map(r => {
     const add = {datePublished:dp.toISOString()};
     return {...r, ...add}
 });
-const overview = data.map(e => _.pick(e, 'id', 'image', 'title', 'datePublished', 'difficulty'));
+const recipeInfos = data.map(e => _.pick(e, 'id', 'image', 'title', 'datePublished', 'difficulty', `recipeYield`, `cookTime`, `prepTime`));
 
 module.exports = {
 
     all(sortByDate, titlePattern, page = 1) {
         const r = titlePattern
-            ? overview.filter(r => (r.title.toLowerCase().indexOf(titlePattern.toLowerCase()) > -1))
-            : _.sample(overview, 10).sort();
+            ? recipeInfos.filter(r => (r.title.toLowerCase().indexOf(titlePattern.toLowerCase()) > -1))
+            : _.sample(recipeInfos, 10).sort();
         const sortedOrNot = sortByDate
             ? r.sort((r1, r2) => r2.datePublished < r1.datePublished ? -1 : 1)
             : r;

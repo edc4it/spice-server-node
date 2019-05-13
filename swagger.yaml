@@ -100,27 +100,27 @@ components:
           description: Publication date of the recipe (ISO format)
           type: string
           example: 2014-05-01T04:33:46.812Z
+        cookTime:
+          type: string
+          description: Cooking time (ISO 8601)
+          example: PT8H45M
+        prepTime:
+          type: string
+          description: preperation time (ISO 8601)
+          example: PT30M
+        recipeYield:
+          type: string
+          description: How many servings the recipes yields
+          example: "6 servings"
     RecipeDetails:
       allOf:
         - $ref: '#/components/schemas/RecipeInfo'
         - type: object
           properties:
-            cookTime:
-              type: string
-              description: Cooking time (ISO 8601)
-              example: PT8H45M
-            prepTime:
-              type: string
-              description: preperation time (ISO 8601)
-              example: PT30M
             source:
               type: string
               description: Source of the recipe
               example: bbcfood
-            recipeYield:
-              type: string
-              description: How many servings the recipes yields
-              example: "6 servings"
             description:
               type: string
               description: A short description of the recipe
