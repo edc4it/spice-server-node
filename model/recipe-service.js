@@ -2,14 +2,35 @@ const Maybe = require('monet').Maybe;
 const _ = require("underscore");
 
 const _data = require('./test-data');
-const yearDiff = new Date().getFullYear()-2015;
+const yearDiff = new Date().getFullYear() - 2015;
+const faker = require('faker');
 const data = _data.map(r => {
-    const dp = new Date(r.datePublished);
-    dp.setFullYear(dp.getFullYear()+yearDiff);
-    const add = {datePublished:dp.toISOString()};
+    const add = {
+        datePublished: faker.date.past(1).toISOString(),
+        author: faker.name.findName(),
+        reviews: [...Array(faker.random.number({min: 2, max: 5}))].map(() => {
+            const author = {
+                first_name: faker.name.firstName(),
+                last_name: faker.name.lastName(),
+                user_name: faker.internet.userName(this.first_name, this.last_name)
+            };
+            return {
+                "rate": faker.random.number({min: 1, max: 5}),
+                "name": author.user_name,
+                "avatar" : faker.internet.avatar(),
+                "country": faker.address.country(),
+                "email": faker.internet.email(author.user_name),
+                "submitted": faker.date.past(1).toISOString(),
+                "text": faker.lorem.paragraphs(faker.random.number({min: 1, max: 3}))
+            }
+
+        })
+
+
+    };
     return {...r, ...add}
 });
-const recipeInfos = data.map(e => _.pick(e, 'id', 'image', 'title', 'datePublished', 'difficulty', `recipeYield`, `cookTime`, `prepTime`));
+const recipeInfos = data.map(e => _.pick(e, 'id', 'image', 'title', 'datePublished', 'difficulty', `recipeYield`, `cookTime`, `prepTime`, 'author'));
 
 module.exports = {
 
