@@ -1,3 +1,4 @@
+var createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -9,14 +10,15 @@ const serveIndex = require('serve-index');
 const app = express();
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
+const fileUpload = require('express-fileupload');
 
-const allowCrossDomain = function (req, res, next) {
+/*const allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
 
     next();
-};
+};*/
 
 
 // view engine setup
@@ -25,36 +27,29 @@ app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(allowCrossDomain);
+app.use(bodyParser.urlencoded({extended: false}));
+// app.use(allowCrossDomain);
 
-
-app.use('/images', express.static('public/images'),serveIndex('public/images', {'icons': true}))
+app.use(fileUpload());
+app.use('/images', express.static('public/images'), serveIndex('public/images', {'icons': true}))
 app.use('/api', recipeApi);
 
-var options = {
-    // explorer : true,
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     swaggerOptions: {
         deepLinking: true,
     }
-};
+}));
 
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
-// app.get('/', swaggerUi.setup(swaggerDocument));
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
-// error handlers (dev-style, renders errors)
-app.use(function (err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: err
-  });
+app.use(function (e, req, res, next) {
+    if (res.headersSent) {
+        return next(e)
+    }
+    res.status(e.status || 500);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(e));
 });
 module.exports = app;

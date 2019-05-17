@@ -54,6 +54,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipeInfo"
+    post:
+      summary: Add a new recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipeDetails"
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              description: Relative URL to the new recipe
+              schema:
+                type: string
+                example:
+                  - "api/recipes/a746687c715f5f01a188d7b9b8e76818"
+            Content-Url:
+              description: Relative URL to upload the image to
+              schema:
+                type: string
+                example:
+                  - "api/a746687c715f5f01a188d7b9b8e76818/image"
   "/recipes/{id}":
     get:
       summary: Get details of a single recipe
@@ -74,6 +98,47 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecipeDetails"
+  "/recipes/{id}/image":
+    put:
+      summary: Upload the image for a recipe
+      parameters:
+        - in: path
+          description: the id of the recipe
+          name: id
+          required: true
+          schema:
+            type: string
+            example: 5160793296cc6208c8a92751
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  description: 'Supported formats: ".png", ".gif", ".jpg", ".svg"'
+                  required: true
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              description: Relative URL to the image
+              schema:
+                type: string
+                example:
+                  - "/images/a746687c715f5f01a188d7b9b8e76818.png"
+        404:
+          description: when there's no recipe for the id
+        400:
+          description: when not uploading a file
+
+
+
+
 components:
   schemas:
     RecipeInfo:
@@ -83,6 +148,7 @@ components:
           description: Unique id for the recipe
           type: string
           example: 5160793296cc6208c8a92751
+          readOnly: true
         title:
           description: Recipe's title
           type: string
@@ -100,6 +166,7 @@ components:
           description: Publication date of the recipe (ISO format)
           type: string
           example: 2014-05-01T04:33:46.812Z
+          readOnly: true
         author:
           description: the name of the author
           type: string
@@ -139,7 +206,7 @@ components:
             reviews:
               type: array
               items:
-                - $ref: '#/components/schemas/Review'
+                $ref: '#/components/schemas/Review'
               example:
                 - rate: 4
                   name: Isaac
