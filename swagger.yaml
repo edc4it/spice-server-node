@@ -188,6 +188,9 @@ components:
         - $ref: '#/components/schemas/RecipeInfo'
         - type: object
           properties:
+            approved:
+              type: boolean
+              description: wether the recipe has been aprovded for publication
             source:
               type: string
               description: Source of the recipe

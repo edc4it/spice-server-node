@@ -4,7 +4,7 @@ const router = express.Router();
 const uuidv5 = require('uuid/v5');
 const path = require('path')
 // todo add reactive endpoint
-const allowedExt = new Set([".png", ".gif", ".jpg", ".svg"]);
+
 
 router.route('/recipes')
     .get((req, res) => {
@@ -23,6 +23,7 @@ router.route('/recipes')
         const id = uuidv5('dec5c996-b080-442a-b248-aab7cbe6f831', uuidv5.URL).replace(/-/g, "");
         const recipe = req.body;
         recipe.id = id;
+        recipe.approved = false;
         recipe.datePublished = new Date().toISOString();
         recipes.add(recipe);
         res.header("Location", `/api/recipes/${id}`);
@@ -37,7 +38,7 @@ router.route('/recipes/:id')
             .cata(() => res.status(404).send('Not found'), (r) => res.json(r))
     });
 
-
+const allowedExt = new Set([".png", ".gif", ".jpg", ".svg"]);
 router.route('/recipes/:id/image')
     .put((req, res, next) => {
         const ct = req.headers['content-type'];

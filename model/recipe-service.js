@@ -8,6 +8,7 @@ const faker = require('faker');
 let data = _data.map(r => {
     const add = {
         datePublished: faker.date.past(1).toISOString(),
+        approved: true,
         author: faker.name.findName(),
         reviews: [...Array(faker.random.number({min: 2, max: 5}))].map(() => {
             const author = {
@@ -48,7 +49,8 @@ module.exports = {
             const totalPages = Math.ceil(sortedOrNot.length / 10);
             return [sortedOrNot.slice(start, start + 10), totalPages, sortedOrNot.length]
         }
-        const recipeInfos = sortedOrNot.map(e => _.pick(e, 'id', 'image', 'title', 'datePublished', 'difficulty', `recipeYield`, `cookTime`, `prepTime`, 'author'));
+        const recipeInfos =
+            sortedOrNot.filter(r=>r.approved).map(e => _.pick(e, 'id', 'image', 'title', 'datePublished', 'difficulty', `recipeYield`, `cookTime`, `prepTime`, 'author'));
 
         return [recipeInfos, 1, 10];
     },
