@@ -1,3 +1,4 @@
+const _ = require("underscore");
 const express = require('express');
 const recipes = require("../model/recipe-service.js");
 const router = express.Router();
@@ -20,8 +21,12 @@ router.route('/recipes')
         if (!ct.startsWith('application/json')) {
             return res.res.sendStatus(415);
         }
-        const id = uuidv5('dec5c996-b080-442a-b248-aab7cbe6f831', uuidv5.URL).replace(/-/g, "");
+
         const recipe = req.body;
+        const required = ['title','description','ingredients','author'].filter(f=>_.isEmpty(recipe[f]));
+        if (required)
+            res.status(400).json({error: {required}});
+        const id = uuidv5('dec5c996-b080-442a-b248-aab7cbe6f831', uuidv5.URL).replace(/-/g, "");
         recipe.id = id;
         recipe.approved = false;
         recipe.datePublished = new Date().toISOString();

@@ -61,7 +61,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RecipeDetails"
+              $ref: "#/components/schemas/NewRecipe"
       responses:
         "201":
           description: Created
@@ -135,10 +135,6 @@ paths:
           description: when there's no recipe for the id
         400:
           description: when not uploading a file
-
-
-
-
 components:
   schemas:
     RecipeInfo:
@@ -152,10 +148,12 @@ components:
         title:
           description: Recipe's title
           type: string
+          required: true
           example: Spicy Slow-Cooker Beef Chili Recipe
         image:
           description: name of the image file (relative to /images/ [5160793296cc6208c8a92751.png](/images/5160793296cc6208c8a92751.png))
           type: string
+          required: true
           example: 5160793296cc6208c8a92751.png
         difficulty:
           description: number between 0 and 5 indicating dificulty level to prepare the
@@ -170,6 +168,7 @@ components:
         author:
           description: the name of the author
           type: string
+          required: true
           example: dparesh
         cookTime:
           type: string
@@ -185,6 +184,21 @@ components:
           example: "6 servings"
     RecipeDetails:
       allOf:
+        - $ref: '#/components/schemas/NewRecipe'
+        - type: object
+          properties:
+            reviews:
+              type: array
+              items:
+                $ref: '#/components/schemas/Review'
+              example:
+                - rate: 4
+                  name: Isaac
+                  email: "Leonora_Gusikowski86@yahoo.com"
+                  submitted: "2015-01-16T06:40:39.684Z"
+                  text: "Wonderful and easy recipe..."
+    NewRecipe:
+      allOf:
         - $ref: '#/components/schemas/RecipeInfo'
         - type: object
           properties:
@@ -199,23 +213,15 @@ components:
               type: string
               description: A short description of the recipe
               example: A classic chili recipe made easy in a slow cooker with a mixture of ground beef, onion …
+              required: true
             ingredients:
               type: array
+              required: true
               items:
                 type: string
                 example:
                   - "3 tablespoons  vegetable oil"
                   - "2 medium yellow onions , medium dice"
-            reviews:
-              type: array
-              items:
-                $ref: '#/components/schemas/Review'
-              example:
-                - rate: 4
-                  name: Isaac
-                  email: "Leonora_Gusikowski86@yahoo.com"
-                  submitted: "2015-01-16T06:40:39.684Z"
-                  text: "Wonderful and easy recipe..."
     Review:
       type: object
       properties:
