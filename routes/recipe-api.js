@@ -2,7 +2,7 @@ const _ = require("underscore");
 const express = require('express');
 const recipes = require("../model/recipe-service.js");
 const router = express.Router();
-const uuidv5 = require('uuid/v5');
+const uuidv4 = require('uuid/v4');
 const path = require('path')
 // todo add reactive endpoint
 
@@ -23,18 +23,23 @@ router.route('/recipes')
         }
 
         const recipe = req.body;
-        const required = ['title','description','ingredients','author'].filter(f=>_.isEmpty(recipe[f]));
-        if (required)
+        const required = ['title', 'description', 'ingredients', 'author'].filter(f => _.isEmpty(recipe[f]));
+        if (required.length > 0) {
             res.status(400).json({error: {required}});
-        const id = uuidv5('dec5c996-b080-442a-b248-aab7cbe6f831', uuidv5.URL).replace(/-/g, "");
-        recipe.id = id;
-        recipe.approved = false;
-        recipe.datePublished = new Date().toISOString();
-        recipes.add(recipe);
-        res.header("Location", `/api/recipes/${id}`);
-        res.header("Content-Url", `/api/recipes/${id}/image`);
-        res.sendStatus(201);
-
+        } else {
+            const id = uuidv4().replace(/-/g, "");
+            recipe.id = id;
+            recipe.approved = false;
+            recipe.datePublished = new Date().toISOString();
+            if (!recipe.source) {
+                recipe.source = "spicy-react"
+            }
+            recipes.add(recipe);
+            res.header("Location", `/api/recipes/${id}`);
+            res.header("Content-Url", `/api/recipes/${id}/image`);
+            res.status(201);
+            res.json(recipe);
+        }
     });
 
 router.route('/recipes/:id')
@@ -43,7 +48,7 @@ router.route('/recipes/:id')
             .cata(() => res.status(404).send('Not found'), (r) => res.json(r))
     });
 
-const allowedExt = new Set([".png", ".gif", ".jpg", ".svg"]);
+const allowedExt = new Set([".png", ".gif", ".jpg", "jpeg", ".svg"]);
 router.route('/recipes/:id/image')
     .put((req, res, next) => {
         const ct = req.headers['content-type'];
@@ -52,7 +57,7 @@ router.route('/recipes/:id/image')
         }
 
         const id = req.params.id;
-        const file = req.files.file;
+        const file = req.files.image;
 
         if (!file) {
             return res.status(400).send('No files were uploaded.');

@@ -65,6 +65,10 @@ paths:
       responses:
         "201":
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewRecipe"
           headers:
             Location:
               description: Relative URL to the new recipe
@@ -78,6 +82,21 @@ paths:
                 type: string
                 example:
                   - "api/a746687c715f5f01a188d7b9b8e76818/image"
+        400:
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      required:
+                        type: array
+                        items:
+                          type: string
+                          example: author
   "/recipes/{id}":
     get:
       summary: Get details of a single recipe
@@ -116,8 +135,8 @@ paths:
             schema:
               type: object
               properties:
-                file:
-                  description: 'Supported formats: ".png", ".gif", ".jpg", ".svg"'
+                image:
+                  description: "Supported extensions: .png, .gif, .jpg, jpeg, .svg"
                   required: true
                   type: string
                   format: binary
@@ -217,11 +236,12 @@ components:
             ingredients:
               type: array
               required: true
+              example:
+                - "3 tablespoons  vegetable oil"
+                - "2 medium yellow onions , medium dice"
               items:
                 type: string
-                example:
-                  - "3 tablespoons  vegetable oil"
-                  - "2 medium yellow onions , medium dice"
+
     Review:
       type: object
       properties:
