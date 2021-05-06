@@ -20,7 +20,7 @@
     "serve-favicon": "~2.5.0",
     "serve-index": "^1.9.1",
     "swagger-ui-express": "^4.0.2",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "uuid": "^3.3.2",
     "yamljs": "^0.3.0"
   },
